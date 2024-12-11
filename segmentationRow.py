@@ -1,7 +1,7 @@
 import numpy as np
 import cv2
 import matplotlib.pyplot as plt
-from ImageEnhancement import enhance_image
+from imageEnhancement import imageEnhancement
 from resizeImage import resizeImage
 
 
@@ -16,7 +16,7 @@ def segmentationRow(img, show_visualization=True):
 
         # Resize image first and use this size consistently
         resized_img = resizeImage(img, 500)
-        improved_image = enhance_image(resized_img)
+        improved_image = imageEnhancement(resized_img, False)
 
         # Analysis on improved image
         row_sums = np.sum(improved_image, axis=1)

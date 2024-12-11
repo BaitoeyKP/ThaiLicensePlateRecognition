@@ -1,7 +1,7 @@
 import numpy as np
 import cv2
 import matplotlib.pyplot as plt
-from ImageEnhancement import enhance_image
+from imageEnhancement import imageEnhancement
 from resizeImage import resizeImage
 
 
@@ -16,7 +16,7 @@ def segmentationCharacters(img, show_visualization=True):
 
         # Resize image first and use this size consistently
         resized_img = resizeImage(img, 500)
-        improved_image = enhance_image(resized_img)
+        improved_image = imageEnhancement(resized_img, False)
 
         # Analysis on improved image - using column sums
         column_sums = np.sum(improved_image, axis=0)
@@ -72,7 +72,7 @@ def segmentationCharacters(img, show_visualization=True):
             ):
                 cropped_image = resized_img[:, min_crop:max_crop, :]
                 if (
-                    max_col - min_col > 150
+                    max_col - min_col > 500
                 ):  # Reduced minimum width for character detection
                     cropped_images.append(cropped_image)
                     crop_regions.append((min_crop, max_crop))
@@ -124,8 +124,10 @@ def segmentationCharacters(img, show_visualization=True):
 
             # Bottom row: characters (3 plots in row 2)
             # Display first 6 characters in the bottom row
-            for i in range(min(6, n_crops)):
-                plt.subplot(2, 6, i + 7)  # Start from position 7 (second row)
+            for i in range(n_crops):
+                plt.subplot(
+                    2, n_crops, i + n_crops + 1
+                )  # Start from position 7 (second row)
                 plt.title(f"Char {i+1}")
                 plt.imshow(cv2.cvtColor(cropped_images[i], cv2.COLOR_BGR2RGB))
                 plt.axis("off")
@@ -133,26 +135,6 @@ def segmentationCharacters(img, show_visualization=True):
             plt.tight_layout()
             plt.show()
 
-            # If there are more characters, show them in additional pages
-            if n_crops > 6:
-                remaining_crops = n_crops - 6
-                pages_needed = (remaining_crops + 11) // 12
-
-                for page in range(pages_needed):
-                    start_idx = 6 + page * 12
-                    end_idx = min(start_idx + 12, n_crops)
-
-                    fig = plt.figure(figsize=(15, 5))
-                    plt.suptitle(f"Additional Characters (Page {page + 1})")
-
-                    for i in range(start_idx, end_idx):
-                        plt.subplot(2, 6, i - start_idx + 1)
-                        plt.title(f"Char {i+1}")
-                        plt.imshow(cv2.cvtColor(cropped_images[i], cv2.COLOR_BGR2RGB))
-                        plt.axis("off")
-
-                    plt.tight_layout()
-                    plt.show()
         return cropped_images
 
     except Exception as e:
