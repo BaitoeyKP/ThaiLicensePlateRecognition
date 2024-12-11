@@ -67,7 +67,7 @@ def segmentationRow(img, show_visualization=True):
                 cropped_image = resized_img[min_crop:max_crop, :, :]
                 if (
                     max_row - min_row > 100
-                    and np.max(row_sums_inverted[min_row:max_row]) < 0.7
+                    and np.max(row_sums_inverted[min_row:max_row]) < 0.75
                 ):
                     print(np.max(row_sums_inverted[min_row:max_row]))
                     cropped_images.append(cropped_image)
@@ -75,19 +75,18 @@ def segmentationRow(img, show_visualization=True):
                     crop_regions.append((min_crop, max_crop))
                     region_intensities.append(region_intensity)
 
-        # if len(cropped_images) < 4:
-        #     print(f"Not enough regions found: {len(cropped_images)}")
-        #     return None, None
-
+        if len(cropped_images) < 2:
+            print(f"Not enough regions found: {len(cropped_images)}")
+            data_img = cropped_images[0]
+            province_img = cropped_images[0]
+        else:
+            data_img = cropped_images[0]
+            province_img = cropped_images[1]
         # Select data (high 2) and province (high 4) regions
         # high 1 is index 0, high 2 is index 1, etc.
+
         data_idx = min(1, len(cropped_images) - 1)  # high 2
         province_idx = min(3, len(cropped_images) - 1)  # high 4
-
-        data_img = cropped_images[0]
-        province_img = cropped_images[1]
-        data_region = crop_regions[0]
-        province_region = crop_regions[1]
 
         if show_visualization:
             fig = plt.figure(figsize=(15, 10))
