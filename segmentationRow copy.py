@@ -42,7 +42,6 @@ def segmentationRow(img, show_visualization=True):
         region_intensities = []
 
         h, w = img.shape[:2]
-        min_row_temp = 0
         for region in high_regions:
             min_row = region[0]
             max_row = region[1]
@@ -64,7 +63,6 @@ def segmentationRow(img, show_visualization=True):
                     max_row - min_row > 100
                     and np.max(row_sums_inverted[min_row:max_row]) < 0.75
                 ):
-                    min_row_temp=max_row+100
                     print(np.max(row_sums_inverted[min_row:max_row]))
                     cropped_images.append(cropped_image)
                     heights.append(max_row - min_row)
@@ -73,16 +71,11 @@ def segmentationRow(img, show_visualization=True):
 
         if len(cropped_images) < 2:
             print(f"Not enough regions found: {len(cropped_images)}")
-            # data_img = cropped_images[0]
-            cropped_image = img[min_row_temp:w, :]
-            cropped_images.append(cropped_image)
-            heights.append(w - min_row)
-            crop_regions.append((min_row_temp, w))
-            region_intensities.append(region_intensity)
-            # province_img = cropped_images[0]
-        # else:
-        data_img = cropped_images[0]
-        province_img = cropped_images[1]
+            data_img = cropped_images[0]
+            province_img = cropped_images[0]
+        else:
+            data_img = cropped_images[0]
+            province_img = cropped_images[1]
 
         data_idx = min(1, len(cropped_images) - 1)
         province_idx = min(3, len(cropped_images) - 1)
