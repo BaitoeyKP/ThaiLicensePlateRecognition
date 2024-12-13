@@ -35,20 +35,20 @@ def segmentationRow(img, show_visualization=True):
                 # End the current region and start a new one
                 high_regions.append([start_idx, high_intensity_rows[i - 1]])
                 start_idx = high_intensity_rows[i]
-
+                
         # for i in range(1, len(high_intensity_rows)):
         #     if high_intensity_rows[i] != high_intensity_rows[i - 1] + 1:
         #         print(high_intensity_rows[i])
         #         # if high_intensity_rows[i] > h / 2:
         #         high_regions.append([start_idx, high_intensity_rows[i - 1]])
         #         start_idx = high_intensity_rows[i]
-        # else:
-        #     for j in range(i + 1, len(high_intensity_rows)):
-        #         if high_intensity_rows[i] > h / 2:
-        #             high_regions.append([start_idx, high_intensity_rows[i - 1]])
-        #             start_idx = high_intensity_rows[i]
-        #             i = j
-        #             break
+                # else:
+                #     for j in range(i + 1, len(high_intensity_rows)):
+                #         if high_intensity_rows[i] > h / 2:
+                #             high_regions.append([start_idx, high_intensity_rows[i - 1]])
+                #             start_idx = high_intensity_rows[i]
+                #             i = j
+                #             break
         high_regions.append([start_idx, high_intensity_rows[-1]])
 
         # Process high intensity regions
@@ -75,16 +75,16 @@ def segmentationRow(img, show_visualization=True):
             # Only include regions with significant content
             if region_intensity > threshold:
                 cropped_image = img[min_crop:max_crop, :]
-                if (
-                    max_row - min_row > 100
-                    and np.max(row_sums_inverted[min_row:max_row]) < 0.75
-                ):
-                    min_row_temp = max_row + 100
-                    print(np.max(row_sums_inverted[min_row:max_row]))
-                    cropped_images.append(cropped_image)
-                    heights.append(max_row - min_row)
-                    crop_regions.append((min_crop, max_crop))
-                    region_intensities.append(region_intensity)
+                # if (
+                #     max_row - min_row > 100
+                #     and np.max(row_sums_inverted[min_row:max_row]) < 0.75
+                # ):
+                min_row_temp = max_row + 100
+                print(np.max(row_sums_inverted[min_row:max_row]))
+                cropped_images.append(cropped_image)
+                heights.append(max_row - min_row)
+                crop_regions.append((min_crop, max_crop))
+                region_intensities.append(region_intensity)
 
         if len(cropped_images) < 2:
             print(f"Not enough regions found: {len(cropped_images)}")

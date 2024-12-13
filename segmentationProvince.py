@@ -86,7 +86,7 @@ def segmentationProvince(img, show_visualization=True):
                 crop_regions_temp.append([min_crop, max_crop])
         min_crop = max(crop_regions_temp[0][1] - 500, 0)
         max_crop = min(crop_regions_temp[-1][0] + 500, w)
-        cropped_image = resized_img[:, min_crop:max_crop, :]
+        cropped_image = resized_img[:, min_crop:max_crop]
         cropped_images.append(cropped_image)
         crop_regions.append((min_crop, max_crop))
 

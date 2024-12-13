@@ -70,7 +70,7 @@ def segmentationCharacters(img, show_visualization=True):
                 region_intensity > threshold
                 and 0.4 < np.max(column_sums_inverted[min_col:max_col]) < 0.95
             ):
-                cropped_image = resized_img[:, min_crop:max_crop, :]
+                cropped_image = resized_img[:, min_crop:max_crop]
                 if (
                     max_col - min_col > 500
                 ):  # Reduced minimum width for character detection
