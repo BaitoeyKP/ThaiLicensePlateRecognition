@@ -63,8 +63,8 @@ def segmentationRow(img, show_visualization=True):
             max_row = region[1]
 
             # Expand crop region
-            min_crop = max(int(min_row) - 100, 0)
-            max_crop = min(int(max_row) + 100, h)
+            min_crop = max(int(min_row) - 125, 0)
+            max_crop = min(int(max_row) + 125, h)
 
             if min_crop >= max_crop or max_crop > h:
                 continue

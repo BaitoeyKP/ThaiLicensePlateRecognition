@@ -13,10 +13,10 @@ folder_path = os.getenv("FOLDER_PATH")
 
 loaded_images = load_images_from_folder(folder_path)
 for img in loaded_images:
-    enhance_image = imageEnhancement(img)
-    data, province = segmentationRow(enhance_image)
+    enhance_image = imageEnhancement(img, False)
+    data, province = segmentationRow(enhance_image, False)
     charactersCrop = segmentationCharacters(data)
-    provinceCrop = segmentationProvince(province)
+    # provinceCrop = segmentationProvince(province)
 
 # filename = "24_02_01_V00117.jpg"
 # file_path = os.path.join(folder_path, filename)
