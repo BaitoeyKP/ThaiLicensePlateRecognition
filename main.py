@@ -15,10 +15,10 @@ loaded_images = load_images_from_folder(folder_path)
 for img in loaded_images:
     enhance_image = imageEnhancement(img, False)
     data, province = segmentationRow(enhance_image, False)
-    charactersCrop = segmentationCharacters(data)
-    # provinceCrop = segmentationProvince(province)
+    charactersCrop = segmentationCharacters(data, False)
+    provinceCrop = segmentationProvince(province)
 
-# filename = "24_02_01_V00117.jpg"
+# filename = "24_02_05_V00302.jpg"
 # file_path = os.path.join(folder_path, filename)
 # img = cv2.imread(file_path)
 # enhance_image = imageEnhancement(img)
