@@ -12,10 +12,10 @@ folder_path = "../new"
 loaded_images = load_images_from_folder(folder_path)
 for img in loaded_images:
     print("---------------")
-    enhance_image = imageEnhancement(img, False)
-    data, province = segmentationRow(enhance_image, False)
+    enhance_image = imageEnhancement(img)
+    data, province = segmentationRow(enhance_image)
     charactersCrop = segmentationCharacters(data)
-# provinceCrop = segmentationProvince(province)
+    provinceCrop = segmentationProvince(province)
 
 # filename = "24_02_01_V00002.jpg"
 # file_path = os.path.join(folder_path, filename)

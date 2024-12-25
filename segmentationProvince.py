@@ -15,16 +15,16 @@ def segmentationProvince(img, show_visualization=True):
         original_img = img.copy()
         # Resize image first and use this size consistently
         resized_img = resizeImage(img, 500)
-        improved_image = resized_img
 
+        h, w = resized_img.shape[:2]
         # Analysis on improved image - using column sums
-        column_sums = np.sum(improved_image, axis=0)
+        column_sums = np.sum(resized_img, axis=0)
         column_sums_normalized = column_sums / np.max(column_sums)
         column_sums_inverted = 1 - column_sums_normalized
 
         # Find regions of high intensity
-        threshold = 0.3
-        
+        threshold = 0.25
+
         high_intensity_cols = np.where(column_sums_inverted > threshold)[0]
         if len(high_intensity_cols) == 0:
             print("No high intensity regions found")
@@ -33,12 +33,29 @@ def segmentationProvince(img, show_visualization=True):
         # Find continuous high intensity regions
         high_regions = []
         start_idx = high_intensity_cols[0]
-        min_region_distance = 1200  # Maximum allowed gap between high-intensity regions
+
+        left_border = 600
+        right_border = w - left_border
 
         for i in range(1, len(high_intensity_cols)):
+            # Check width of current region
+            if start_idx < high_intensity_cols[i - 1]:
+                current_range_max = np.max(
+                    column_sums_inverted[start_idx : high_intensity_cols[i - 1]]
+                )
+            # Adjust min_region_distance based on current region width
+            if (
+                start_idx > left_border
+                and high_intensity_cols[i - 1] < right_border
+                and current_range_max < 0.9
+            ):
+                current_min_region_distance = 1000
+            else:
+                current_min_region_distance = 1
+
             if (
                 high_intensity_cols[i] - high_intensity_cols[i - 1]
-                <= min_region_distance
+                <= current_min_region_distance
             ):
                 # Continue the current region
                 continue
@@ -51,46 +68,41 @@ def segmentationProvince(img, show_visualization=True):
         # Process high intensity regions
         cropped_images = []
         crop_regions = []
-        h, w = resized_img.shape[:2]
-        max_len,max_frist,max_second=0,0,0
         for region in high_regions:
             min_col = region[0]
             max_col = region[1]
 
             # Expand crop region
-            min_crop = max(int(min_col) - 20, 0)  # Reduced padding for tighter crops
-            max_crop = min(int(max_col) + 20, w)
+            min_crop = max(int(min_col) - 50, 0)  # Reduced padding for tighter crops
+            max_crop = min(int(max_col) + 50, w)
             if min_crop >= max_crop or max_crop > w:
                 continue
 
             # Calculate mean intensity for this region
             region_intensity = np.mean(column_sums_inverted[min_col:max_col])
-            print(
-                np.min(column_sums_inverted[min_col:max_col]),
-                np.max(column_sums_inverted[min_col:max_col]),
-                np.mean(column_sums_inverted[min_col:max_col]),
-                np.median(column_sums_inverted[min_col:max_col]),
-            )
-            # Include regions with significant content
-            # if (
-            #     region_intensity > threshold
-            #     and 0.4 < np.max(column_sums_inverted[min_col:max_col]) 
-            #     and min_col > 300
-            #     and max_col < w - 300
-            # ):
-            print("12345")
-            cropped_image = resized_img[:, min_crop:max_crop]
-            if max_len<max_crop-min_crop:
-                max_len=max_crop-min_crop
-                max_frist,max_second=min_crop,max_crop
-        cropped_image = resized_img[:, max_frist:max_second]
-        cropped_images.append(cropped_image)
-        crop_regions.append((max_frist, max_second))
+            if region_intensity > threshold:
+                print(
+                    "min_col:",
+                    min_col,
+                    " | max_col:",
+                    max_col,
+                    " | size:",
+                    max_col - min_col,
+                )
+                cropped_image = resized_img[:, min_crop:max_crop]
+                cropped_images.append(cropped_image)
+                crop_regions.append((min_crop, max_crop))
+
+            if len(cropped_images) < 1:
+                cropped_image = resized_img[:, left_border:right_border]
+                cropped_images.append(cropped_image)
+                crop_regions.append((left_border, right_border))
+
         if show_visualization:
-            # Calculate layout
-            n_crops = len(cropped_images)
-            # if n_crops == 0:
-            #     return None
+            # Find the largest crop
+            largest_crop_idx = max(
+                range(len(cropped_images)), key=lambda i: cropped_images[i].shape[1]
+            )
 
             # Create figure with top row for analysis and bottom rows for characters
             fig = plt.figure(figsize=(15, 10))
@@ -103,7 +115,7 @@ def segmentationProvince(img, show_visualization=True):
 
             plt.subplot(2, 3, 2)
             plt.title("Improved Image")
-            plt.imshow(cv2.cvtColor(improved_image, cv2.COLOR_BGR2RGB))
+            plt.imshow(cv2.cvtColor(resized_img, cv2.COLOR_BGR2RGB))
             plt.axis("off")
 
             plt.subplot(2, 3, 3)
@@ -131,15 +143,13 @@ def segmentationProvince(img, show_visualization=True):
             plt.ylabel("Inverted Normalized Sum")
             plt.xlabel("Column Number")
 
-            # Bottom row: characters (3 plots in row 2)
-            # Display first 6 characters in the bottom row
-            for i in range(n_crops):
-                plt.subplot(
-                    2, n_crops, i + n_crops + 1
-                )  # Start from position 7 (second row)
-                plt.title(f"Char {i+1}")
-                plt.imshow(cv2.cvtColor(cropped_images[i], cv2.COLOR_BGR2RGB))
-                plt.axis("off")
+            # Bottom row: Show only the largest character
+            plt.subplot(2, 3, 5)  # Center position in bottom row
+            plt.title("Province")
+            plt.imshow(
+                cv2.cvtColor(cropped_images[largest_crop_idx], cv2.COLOR_BGR2RGB)
+            )
+            plt.axis("off")
 
             plt.tight_layout()
             plt.show()
