@@ -15,16 +15,19 @@ def segmentationCharacters(img, show_visualization=True):
         original_img = img.copy()
         # Resize image first and use this size consistently
         resized_img = resizeImage(img, 500)
-        improved_image = resized_img
 
+        h, w = resized_img.shape[:2]
         # Analysis on improved image - using column sums
-        column_sums = np.sum(improved_image, axis=0)
+        column_sums = np.sum(resized_img, axis=0)
         column_sums_normalized = column_sums / np.max(column_sums)
         column_sums_inverted = 1 - column_sums_normalized
 
-        # Find regions of high intensity
-        threshold = 0.05
-        
+        if np.mean(column_sums_inverted) > 0.36:
+            threshold = 0.17
+        else:
+            threshold = 0.05
+        # print("mean:", np.mean(column_sums_inverted), " | threshold:", threshold)
+
         high_intensity_cols = np.where(column_sums_inverted > threshold)[0]
         if len(high_intensity_cols) == 0:
             print("No high intensity regions found")
@@ -33,12 +36,38 @@ def segmentationCharacters(img, show_visualization=True):
         # Find continuous high intensity regions
         high_regions = []
         start_idx = high_intensity_cols[0]
-        min_region_distance = 1  # Maximum allowed gap between high-intensity regions
+        left_border = 600
+        right_border = w - left_border
 
         for i in range(1, len(high_intensity_cols)):
+            # Check width of current region
+            current_width = high_intensity_cols[i - 1] - start_idx
+            if start_idx < high_intensity_cols[i - 1]:
+                current_range_max = np.max(
+                    column_sums_inverted[start_idx : high_intensity_cols[i - 1]]
+                )
+
+            # Adjust min_region_distance based on current region width
+            if (
+                1000 < current_width < 1300
+                and start_idx > left_border
+                and high_intensity_cols[i - 1] < right_border
+                and current_range_max > 0.5
+            ):
+                current_min_region_distance = 120
+            elif (
+                800 < current_width < 1000
+                and start_idx > left_border
+                and high_intensity_cols[i - 1] < right_border
+                and current_range_max > 0.5
+            ):
+                current_min_region_distance = 450
+            else:
+                current_min_region_distance = 1
+
             if (
                 high_intensity_cols[i] - high_intensity_cols[i - 1]
-                <= min_region_distance
+                <= current_min_region_distance
             ):
                 # Continue the current region
                 continue
@@ -46,12 +75,12 @@ def segmentationCharacters(img, show_visualization=True):
                 # End the current region and start a new one
                 high_regions.append([start_idx, high_intensity_cols[i - 1]])
                 start_idx = high_intensity_cols[i]
+
         high_regions.append([start_idx, high_intensity_cols[-1]])
 
         # Process high intensity regions
         cropped_images = []
         crop_regions = []
-        h, w = resized_img.shape[:2]
         for region in high_regions:
             min_col = region[0]
             max_col = region[1]
@@ -64,23 +93,29 @@ def segmentationCharacters(img, show_visualization=True):
 
             # Calculate mean intensity for this region
             region_intensity = np.mean(column_sums_inverted[min_col:max_col])
-            print(
-                np.min(column_sums_inverted[min_col:max_col]),
-                np.max(column_sums_inverted[min_col:max_col]),
-                np.mean(column_sums_inverted[min_col:max_col]),
-                np.median(column_sums_inverted[min_col:max_col]),
-            )
+            # print(
+            #     np.min(column_sums_inverted[min_col:max_col]),
+            # np.max(column_sums_inverted[min_col:max_col]),
+            # np.mean(column_sums_inverted[min_col:max_col]),
+            # np.median(column_sums_inverted[min_col:max_col]),
+            # )
             # Include regions with significant content
             if (
                 region_intensity > threshold
                 and 0.4 < np.max(column_sums_inverted[min_col:max_col]) < 0.99
-                and min_col > 300
-                and max_col < w - 300
+                and min_col > left_border
+                and max_col < right_border
             ):
-                print("12345")
+                # print(
+                #     "min_col:",
+                #     min_col,
+                #     " | max_col:",
+                #     max_col,
+                # )
                 cropped_image = resized_img[:, min_crop:max_crop]
                 cropped_images.append(cropped_image)
                 crop_regions.append((min_crop, max_crop))
+
         if show_visualization:
             # Calculate layout
             n_crops = len(cropped_images)
@@ -91,17 +126,12 @@ def segmentationCharacters(img, show_visualization=True):
             fig = plt.figure(figsize=(15, 10))
 
             # Top row: analysis plots (3 plots in row 1)
-            plt.subplot(2, 3, 1)
+            plt.subplot(2, 2, 1)
             plt.title("Original Image")
             plt.imshow(cv2.cvtColor(original_img, cv2.COLOR_BGR2RGB))
             plt.axis("off")
 
-            plt.subplot(2, 3, 2)
-            plt.title("Improved Image")
-            plt.imshow(cv2.cvtColor(improved_image, cv2.COLOR_BGR2RGB))
-            plt.axis("off")
-
-            plt.subplot(2, 3, 3)
+            plt.subplot(2, 2, 2)
             plt.title("Column Analysis")
             plt.plot(
                 range(len(column_sums_inverted)),
