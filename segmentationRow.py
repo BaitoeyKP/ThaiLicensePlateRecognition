@@ -18,7 +18,14 @@ def segmentationRow(img, show_visualization=True):
         row_sums_inverted = 1 - row_sums_normalized
 
         # First, find regions of high intensity
-        threshold = 0.17
+        threshold = 0.18
+        # print(
+        #     "original - min : {:.5f} | max : {:.5f} | mean: {:.5f}".format(
+        #         np.min(row_sums_inverted),
+        #         np.max(row_sums_inverted),
+        #         np.mean(row_sums_inverted),
+        #     )
+        # )
         high_intensity_rows = np.where(row_sums_inverted > threshold)[0]
         h, w = img.shape[:2]
         if len(high_intensity_rows) == 0:
@@ -28,7 +35,6 @@ def segmentationRow(img, show_visualization=True):
         # Find continuous high intensity regions
         high_regions = []
         start_idx = high_intensity_rows[0]
-        # min_region_distance = 100  # Maximum allowed gap between high-intensity regions
 
         for i in range(1, len(high_intensity_rows)):
             if high_intensity_rows[i] != high_intensity_rows[i - 1] + 1:
@@ -36,19 +42,6 @@ def segmentationRow(img, show_visualization=True):
                 high_regions.append([start_idx, high_intensity_rows[i - 1]])
                 start_idx = high_intensity_rows[i]
 
-        # for i in range(1, len(high_intensity_rows)):
-        #     if high_intensity_rows[i] != high_intensity_rows[i - 1] + 1:
-        #         print(high_intensity_rows[i])
-        #         # if high_intensity_rows[i] > h / 2:
-        #         high_regions.append([start_idx, high_intensity_rows[i - 1]])
-        #         start_idx = high_intensity_rows[i]
-        # else:
-        #     for j in range(i + 1, len(high_intensity_rows)):
-        #         if high_intensity_rows[i] > h / 2:
-        #             high_regions.append([start_idx, high_intensity_rows[i - 1]])
-        #             start_idx = high_intensity_rows[i]
-        #             i = j
-        #             break
         high_regions.append([start_idx, high_intensity_rows[-1]])
 
         # Process high intensity regions
@@ -75,12 +68,22 @@ def segmentationRow(img, show_visualization=True):
             # Only include regions with significant content
             if region_intensity > threshold:
                 cropped_image = img[min_crop:max_crop, :]
-                if (
-                    max_row - min_row > 100
-                    and np.max(row_sums_inverted[min_row:max_row]) < 0.75
+                size = max_row - min_row
+                if size > 200 and (
+                    size / h >= 0.1 or np.max(row_sums_inverted[min_row:max_row]) < 0.75
                 ):
                     min_row_temp = max_row + 100
-                    print(np.max(row_sums_inverted[min_row:max_row]))
+                    # print(
+                    #     "min : {:.5f} | max : {:.5f} | mean : {:.5f}".format(
+                    #         np.min(row_sums_inverted[min_row:max_row]),
+                    #         np.max(row_sums_inverted[min_row:max_row]),
+                    #         np.mean(row_sums_inverted[min_row:max_row]),
+                    #     ),
+                    #     " | h : ",
+                    #     size,
+                    #     " | h-min : ",
+                    #     h - min_row,
+                    # )
                     cropped_images.append(cropped_image)
                     heights.append(max_row - min_row)
                     crop_regions.append((min_crop, max_crop))
@@ -88,14 +91,13 @@ def segmentationRow(img, show_visualization=True):
 
         if len(cropped_images) < 2:
             print(f"Not enough regions found: {len(cropped_images)}")
-            # data_img = cropped_images[0]
-            cropped_image = img[min_row_temp:w, :]
+            # cropped_image = img[min_row_temp:w, :]
+            cropped_image = img[h - 700 : h, :]
             cropped_images.append(cropped_image)
             heights.append(w - min_row)
             crop_regions.append((min_row_temp, w))
             region_intensities.append(region_intensity)
-            # province_img = cropped_images[0]
-        # else:
+
         data_img = cropped_images[0]
         province_img = cropped_images[1]
 

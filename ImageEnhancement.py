@@ -22,6 +22,22 @@ def imageEnhancement(image, show_visualization=True):
         clahe = cv2.createCLAHE(clipLimit=3.0, tileGridSize=(8, 8))
         contrast_enhanced = clahe.apply(denoised)
 
+        average_brightness = np.mean(contrast_enhanced)
+        # print(f"Average brightness: {average_brightness:.2f}")
+
+        brightness_threshold = 130
+
+        if average_brightness < brightness_threshold:
+            # Calculate the brightness increase needed
+            increase = 125
+            brightness_matrix = np.full_like(
+                contrast_enhanced, increase, dtype=np.uint8
+            )
+            # Add the brightness
+            contrast_enhanced = cv2.add(contrast_enhanced, brightness_matrix)
+            # print(f"Increased brightness by {increase:.2f}")
+            # print(f"Increased brightness to {np.mean(contrast_enhanced):.2f}")
+
         # Thresholding to separate text from background
         _, binary = cv2.threshold(
             contrast_enhanced, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU
