@@ -2,15 +2,12 @@ import cv2
 from matplotlib import pyplot as plt
 import numpy as np
 
-from resizeImage import resizeImage
+from resizeImage import resizeImageScale
 
 
-def imageEnhancement(image, show_visualization=True):
-    """
-    Apply specialized enhancement techniques for license plate images
-    """
+def imageEnhancement(image, show_visualization=False):
     try:
-        resized_img = resizeImage(image, 500)
+        resized_img = resizeImageScale(image, 500)
 
         # Convert to grayscale
         gray = cv2.cvtColor(resized_img, cv2.COLOR_BGR2GRAY)

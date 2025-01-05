@@ -1,11 +1,13 @@
+import os
 import numpy as np
 import cv2
 import matplotlib.pyplot as plt
-from imageEnhancement import imageEnhancement
-from resizeImage import resizeImage
+from resizeImage import resizeImageScale
 
 
-def segmentationCharacters(img, show_visualization=True):
+def segmentationCharacters(
+    img, input_filename, show_visualization=False, save_path=None
+):
     try:
         if img is None or img.size == 0:
             print("Invalid input image")
@@ -14,7 +16,7 @@ def segmentationCharacters(img, show_visualization=True):
         # Store original before any processing
         original_img = img.copy()
         # Resize image first and use this size consistently
-        resized_img = resizeImage(img, 500)
+        resized_img = resizeImageScale(img, 500)
 
         h, w = resized_img.shape[:2]
         # Analysis on improved image - using column sums
@@ -168,6 +170,21 @@ def segmentationCharacters(img, show_visualization=True):
 
             plt.tight_layout()
             plt.show()
+
+        # Add saving functionality
+        if save_path:
+            # Create directory if it doesn't exist
+            os.makedirs(save_path, exist_ok=True)
+
+            # Save each cropped image
+            for idx, (cropped_image) in enumerate(cropped_images):
+                # Create filename with region information
+                filename = f"{input_filename}_cropped_{idx}.png"
+                filepath = os.path.join(save_path, filename)
+
+                # Save the image
+                cv2.imwrite(filepath, cropped_image)
+                print(f"Saved cropped image {idx+1} to: {filepath}")
 
         return cropped_images
 

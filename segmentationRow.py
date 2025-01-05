@@ -3,7 +3,7 @@ import cv2
 import matplotlib.pyplot as plt
 
 
-def segmentationRow(img, show_visualization=True):
+def segmentationRow(img, show_visualization=False):
     try:
         if img is None or img.size == 0:
             print("Invalid input image")

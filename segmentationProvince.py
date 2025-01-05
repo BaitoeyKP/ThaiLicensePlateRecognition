@@ -1,11 +1,11 @@
+import os
 import numpy as np
 import cv2
 import matplotlib.pyplot as plt
-from imageEnhancement import imageEnhancement
-from resizeImage import resizeImage
+from resizeImage import resizeImageScale
 
 
-def segmentationProvince(img, show_visualization=True):
+def segmentationProvince(img, input_filename, show_visualization=False, save_path=None):
     try:
         if img is None or img.size == 0:
             print("Invalid input image")
@@ -14,7 +14,7 @@ def segmentationProvince(img, show_visualization=True):
         # Store original before any processing
         original_img = img.copy()
         # Resize image first and use this size consistently
-        resized_img = resizeImage(img, 500)
+        resized_img = resizeImageScale(img, 500)
 
         h, w = resized_img.shape[:2]
         # Analysis on improved image - using column sums
@@ -153,6 +153,25 @@ def segmentationProvince(img, show_visualization=True):
 
             plt.tight_layout()
             plt.show()
+
+        # Add saving functionality
+        if save_path:
+            # Create directory if it doesn't exist
+            os.makedirs(save_path, exist_ok=True)
+
+            # Find the largest crop - only once per input image
+            if len(cropped_images) > 0:  # Make sure we have cropped images
+                largest_crop_idx = max(
+                    range(len(cropped_images)), key=lambda i: cropped_images[i].shape[1]
+                )
+
+                # Save only the largest cropped image once
+                filename = f"{input_filename}_Province.png"
+                filepath = os.path.join(save_path, filename)
+
+                # Save the image
+                cv2.imwrite(filepath, cropped_images[largest_crop_idx])
+                print(f"Saved largest province crop to: {filepath}")
 
         return cropped_images
 
