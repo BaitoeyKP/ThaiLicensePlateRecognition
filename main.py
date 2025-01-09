@@ -6,8 +6,8 @@ from segmentationCharacters import segmentationCharacters
 from segmentationProvince import segmentationProvince
 from segmentationRow import segmentationRow
 
-folder_path = "../testmodel"
-model_path = "model/MobileNetV3Small.onnx"
+folder_path = "../autoTransformation"
+model_path = "model/Characters_MobileNetV3Small.onnx"
 characters_class_mapping = [
     "0",
     "1",
@@ -70,21 +70,21 @@ for img, filename in zip(loaded_images, filenames):
     enhance_image = imageEnhancement(img)
     data, province = segmentationRow(enhance_image)
 
-    charactersCrop = segmentationCharacters(data, filename)
-    characters = []
-    if charactersCrop is not None:
-        for img in charactersCrop:
-            if img is not None and img.size > 0:
-                height = 224
-                width = height // 3  # 3:1 ratio
-                img = resizeImageFix(img, width, height)
-                character = runOnnxModel(
-                    img,
-                    model_path,
-                    characters_class_mapping,
-                )
-                characters.append(character)
-    characters = "".join(characters)
-    print(f"License_ID : {characters}")
+    # charactersCrop = segmentationCharacters(data, filename)
+    # characters = []
+    # if charactersCrop is not None:
+    #     for img in charactersCrop:
+    #         if img is not None and img.size > 0:
+    #             height = 224
+    #             width = height // 3  # 3:1 ratio
+    #             img = resizeImageFix(img, width, height)
+    #             character = runOnnxModel(
+    #                 img,
+    #                 model_path,
+    #                 characters_class_mapping,
+    #             )
+    #             characters.append(character)
+    # characters = "".join(characters)
+    # print(f"License_ID : {characters}")
 
-    # provinceCrop = segmentationProvince(province, filename)
+    provinceCrop = segmentationProvince(province, filename, save_path="../output/province")

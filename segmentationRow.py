@@ -69,7 +69,7 @@ def segmentationRow(img, show_visualization=False):
             if region_intensity > threshold:
                 cropped_image = img[min_crop:max_crop, :]
                 size = max_row - min_row
-                if size > 200 and (
+                if size > 50 and (
                     size / h >= 0.1 or np.max(row_sums_inverted[min_row:max_row]) < 0.75
                 ):
                     min_row_temp = max_row + 100
@@ -92,7 +92,7 @@ def segmentationRow(img, show_visualization=False):
         if len(cropped_images) < 2:
             print(f"Not enough regions found: {len(cropped_images)}")
             # cropped_image = img[min_row_temp:w, :]
-            cropped_image = img[h - 700 : h, :]
+            cropped_image = img[h - 150 : h, :]
             cropped_images.append(cropped_image)
             heights.append(w - min_row)
             crop_regions.append((min_row_temp, w))

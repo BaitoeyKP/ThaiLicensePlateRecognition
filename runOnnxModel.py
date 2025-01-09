@@ -44,6 +44,8 @@ def runOnnxModel(image_input, model_path, class_mapping):
     #         f"Index {idx}: Class {class_label}, "
     #         f"Confidence: {probabilities[idx]:.2f}"
     #     )
+    
+    # 8.5
 
     result = class_mapping[np.argmax(probabilities)]
 
