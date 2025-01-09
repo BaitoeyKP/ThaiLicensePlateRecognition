@@ -7,7 +7,7 @@ from segmentationProvince import segmentationProvince
 from segmentationRow import segmentationRow
 
 folder_path = "../testmodel"
-model_path = "model/MobileNetV3Small.onnx"
+model_path = "model/Characters_MobileNetV3Small.onnx"
 characters_class_mapping = [
     "0",
     "1",
@@ -78,11 +78,12 @@ for img, filename in zip(loaded_images, filenames):
                 height = 224
                 width = height // 3  # 3:1 ratio
                 img = resizeImageFix(img, width, height)
-                character = runOnnxModel(
+                character, confident = runOnnxModel(
                     img,
                     model_path,
                     characters_class_mapping,
                 )
+                # print(f"character : {character} | confident : {confident:.2f}%")
                 characters.append(character)
     characters = "".join(characters)
     print(f"License_ID : {characters}")
