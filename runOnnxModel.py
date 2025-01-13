@@ -4,6 +4,11 @@ import numpy as np
 from PIL import Image
 
 
+def softmax(x):
+    exp_x = np.exp(x - np.max(x))
+    return exp_x / exp_x.sum()
+
+
 def runOnnxModel(image_input, model_path, class_mapping):
     session = ort.InferenceSession(model_path)
 
@@ -30,10 +35,12 @@ def runOnnxModel(image_input, model_path, class_mapping):
     # Run inference
     input_name = session.get_inputs()[0].name
     outputs = session.run(None, {input_name: input_data.astype(np.float32)})
-    probabilities = outputs[0][0]
+    logits = outputs[0][0]
 
-    # # Get top predictions
-    # top_indices = np.argsort(probabilities)[-3:][::-1]  # Get top 5
+    probabilities = softmax(logits)
+
+    # Get top predictions
+    top_indices = np.argsort(probabilities)[-3:][::-1]
 
     # print("\nPredictions:")
     # for idx in top_indices:
@@ -42,11 +49,12 @@ def runOnnxModel(image_input, model_path, class_mapping):
     #     )
     #     print(
     #         f"Index {idx}: Class {class_label}, "
-    #         f"Confidence: {probabilities[idx]:.2f}"
+    #         f"Confidence: {probabilities[idx]*100:.2f}%"
     #     )
     
     # 8.5
 
-    result = class_mapping[np.argmax(probabilities)]
+    class_label = class_mapping[top_indices[0]]
+    confident = probabilities[top_indices[0]] * 100
 
-    return result
+    return class_label, confident

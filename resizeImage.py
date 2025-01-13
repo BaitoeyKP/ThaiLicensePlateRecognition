@@ -7,6 +7,7 @@ def resizeImageScale(image, scale):
     resized = cv2.resize(image, (width, height), interpolation=cv2.INTER_CUBIC)
     return resized
 
+
 def resizeImageFix(image, width, height):
     resized = cv2.resize(image, (width, height), interpolation=cv2.INTER_AREA)
     return resized
