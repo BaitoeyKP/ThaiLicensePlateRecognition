@@ -40,7 +40,18 @@ def runOnnxModel(image_input, model_path, class_mapping):
     probabilities = softmax(logits)
 
     # Get top predictions
-    top_indices = np.argsort(probabilities)[-1:][::-1]
+    top_indices = np.argsort(probabilities)[-3:][::-1]
+
+    # print("\nPredictions:")
+    # for idx in top_indices:
+    #     class_label = (
+    #         class_mapping[idx] if idx < len(class_mapping) else f"Unknown({idx})"
+    #     )
+    #     print(
+    #         f"Index {idx}: Class {class_label}, "
+    #         f"Confidence: {probabilities[idx]*100:.2f}%"
+    #     )
+
     class_label = class_mapping[top_indices[0]]
     confident = probabilities[top_indices[0]] * 100
 

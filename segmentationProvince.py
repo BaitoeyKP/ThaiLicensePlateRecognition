@@ -81,14 +81,14 @@ def segmentationProvince(img, input_filename, show_visualization=False, save_pat
             # Calculate mean intensity for this region
             region_intensity = np.mean(column_sums_inverted[min_col:max_col])
             if region_intensity > threshold:
-                print(
-                    "min_col:",
-                    min_col,
-                    " | max_col:",
-                    max_col,
-                    " | size:",
-                    max_col - min_col,
-                )
+                # print(
+                #     "min_col:",
+                #     min_col,
+                #     " | max_col:",
+                #     max_col,
+                #     " | size:",
+                #     max_col - min_col,
+                # )
                 cropped_image = resized_img[:, min_crop:max_crop]
                 cropped_images.append(cropped_image)
                 crop_regions.append((min_crop, max_crop))
