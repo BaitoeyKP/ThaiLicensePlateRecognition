@@ -66,7 +66,6 @@ characters_class_mapping = [
     "ฬ",
     "อ",
     "ฮ",
-
 ]
 province_class_mapping = [
     "เชียงใหม่",
@@ -146,6 +145,7 @@ province_class_mapping = [
     "นนทบุรี",
     "ภูเก็ต",
     "สมุทรสงคราม",
+    "เบตง",
 ]
 loaded_images, filenames = loadImageFromFolder(folder_path)
 for img, filename in zip(loaded_images, filenames):
