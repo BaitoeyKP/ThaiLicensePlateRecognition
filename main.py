@@ -8,7 +8,7 @@ from segmentationCharacters import segmentationCharacters
 from segmentationProvince import segmentationProvince
 from segmentationRow import segmentationRow
 
-folder_path = "../update"
+folder_path = "../testmodel"
 character_model_path = "model/Characters_MobileNetV3Small.onnx"
 province_model_path = "model/Province_MobileNetV3Small.onnx"
 characters_class_mapping = [
@@ -188,12 +188,12 @@ for img, filename in zip(loaded_images, filenames):
         # print(f"province : {province} | confident : {confident:.2f}%")
         # print(f"Province : {province}")
 
-output = {
-    "ParkingSlots_ID": filename,
-    "License_ID": characters,
-    "Province": province,
-}
+    output = {
+        "ParkingSlots_ID": filename,
+        "License_ID": characters,
+        "Province": province,
+    }
 
-# Convert results to JSON and print
-json_output = json.dumps(output, ensure_ascii=False, indent=2)
-print(json_output)
+    # Convert results to JSON and print
+    json_output = json.dumps(output, ensure_ascii=False, indent=2)
+    print(json_output)

@@ -38,6 +38,7 @@ def segmentationProvince(img, input_filename, show_visualization=False, save_pat
         right_border = w - left_border
 
         for i in range(1, len(high_intensity_cols)):
+            current_range_max = 0
             # Check width of current region
             if start_idx < high_intensity_cols[i - 1]:
                 current_range_max = np.max(
