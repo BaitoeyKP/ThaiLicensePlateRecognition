@@ -18,7 +18,7 @@ def segmentationRow(img, show_visualization=False):
         row_sums_inverted = 1 - row_sums_normalized
 
         # First, find regions of high intensity
-        threshold = 0.18
+        threshold = 0.15
         # print(
         #     "original - min : {:.5f} | max : {:.5f} | mean: {:.5f}".format(
         #         np.min(row_sums_inverted),
@@ -49,6 +49,8 @@ def segmentationRow(img, show_visualization=False):
         heights = []
         crop_regions = []
         region_intensities = []
+        up_border = 0
+        bottom_border = h - up_border
 
         min_row_temp = 0
         for region in high_regions:
@@ -56,8 +58,12 @@ def segmentationRow(img, show_visualization=False):
             max_row = region[1]
 
             # Expand crop region
-            min_crop = max(int(min_row) - 100, 0)
-            max_crop = min(int(max_row) + 100, h)
+            min_crop = max(int(min_row) - 40, 0)
+            max_crop = min(int(max_row) + 40, h)
+            
+            # Check if crop region is within border constraints
+            if (min_crop < up_border) or (max_crop > bottom_border):
+                continue
 
             if min_crop >= max_crop or max_crop > h:
                 continue
@@ -70,7 +76,8 @@ def segmentationRow(img, show_visualization=False):
                 cropped_image = img[min_crop:max_crop, :]
                 size = max_row - min_row
                 if size > 50 and (
-                    size / h >= 0.1 or np.max(row_sums_inverted[min_row:max_row]) < 0.75
+                    # size / h >= 0.1 or 
+                    np.max(row_sums_inverted[min_row:max_row]) < 0.75
                 ):
                     min_row_temp = max_row + 100
                     # print(
@@ -92,7 +99,7 @@ def segmentationRow(img, show_visualization=False):
         if len(cropped_images) < 2:
             print(f"Not enough regions found: {len(cropped_images)}")
             # cropped_image = img[min_row_temp:w, :]
-            cropped_image = img[h - 150 : h, :]
+            cropped_image = img[h - 175 : h, :]
             cropped_images.append(cropped_image)
             heights.append(w - min_row)
             crop_regions.append((min_row_temp, w))
@@ -119,6 +126,10 @@ def segmentationRow(img, show_visualization=False):
                 row_sums_inverted, range(len(row_sums_inverted)), "k-", label="Row Sums"
             )
             plt.axvline(x=threshold, color="r", linestyle="--", label="Threshold")
+            
+            # Add border constraint lines
+            plt.axhline(y=up_border, color='orange', linestyle='--', label='Upper Border')
+            plt.axhline(y=bottom_border, color='orange', linestyle='--', label='Lower Border')
 
             # Highlight detected regions
             colors = [

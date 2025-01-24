@@ -51,7 +51,7 @@ def segmentationProvince(img, input_filename, show_visualization=False, save_pat
                 and high_intensity_cols[i - 1] < right_border
                 and current_range_max < 0.9
             ):
-                current_min_region_distance = 1000
+                current_min_region_distance = 500
             else:
                 current_min_region_distance = 1
 
