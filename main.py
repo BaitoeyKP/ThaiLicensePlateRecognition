@@ -148,12 +148,12 @@ province_class_mapping = [
 ]
 
 
-filename = "24_02_05_V00490.jpg"
+filename = "../update/24_02_05_V00490.jpg"
 img = cv2.imread(filename)
-enhance_image = imageEnhancement(img)
+enhance_image = imageEnhancement(img, True)
 data, province = segmentationRow(enhance_image)
 
-charactersCrop = segmentationCharacters(data, filename)
+charactersCrop = segmentationCharacters(data, filename, True)
 characters = []
 if charactersCrop is not None:
     for img in charactersCrop:
@@ -169,7 +169,7 @@ if charactersCrop is not None:
             characters.append(character)
 characters = "".join(characters)
 
-provinceCrop = segmentationProvince(province, filename)
+provinceCrop = segmentationProvince(province, filename, True)
 width = 224
 height = width // 3  # 1:3 ratio
 if provinceCrop:

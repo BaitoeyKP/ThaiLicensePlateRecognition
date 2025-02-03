@@ -5,7 +5,7 @@ import numpy as np
 from resizeImage import resizeImageScale
 
 
-def imageEnhancement(image, show_visualization=False):
+def imageEnhancement(image, show_visualization=True):
     try:
         resized_img = resizeImageScale(image, 500)
 
