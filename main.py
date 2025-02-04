@@ -148,10 +148,10 @@ province_class_mapping = [
 ]
 
 
-filename = "../update/24_02_05_V00490.jpg"
+filename = "../dataset/new/24_02_05_V00490.jpg"
 img = cv2.imread(filename)
 enhance_image = imageEnhancement(img, True)
-data, province = segmentationRow(enhance_image)
+data, province = segmentationRow(enhance_image, True)
 
 charactersCrop = segmentationCharacters(data, filename, True)
 characters = []
@@ -172,17 +172,16 @@ characters = "".join(characters)
 provinceCrop = segmentationProvince(province, filename, True)
 width = 224
 height = width // 3  # 1:3 ratio
-if provinceCrop:
-    provinceImage = resizeImageFix(provinceCrop[0], width, height)
-    province, confident = runOnnxModel(
-        provinceImage,
-        province_model_path,
-        province_class_mapping,
-    )
-    if confident > 50:
-        province = province
-    else:
-        province = ""
+provinceImage = resizeImageFix(provinceCrop, width, height, True)
+province, confident = runOnnxModel(
+    provinceImage,
+    province_model_path,
+    province_class_mapping,
+)
+if confident > 50:
+    province = province
+else:
+    province = ""
 
 output = {
     "ParkingSlots_ID": filename,

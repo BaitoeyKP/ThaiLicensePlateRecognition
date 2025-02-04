@@ -99,11 +99,12 @@ def segmentationProvince(img, input_filename, show_visualization=False, save_pat
                 cropped_images.append(cropped_image)
                 crop_regions.append((left_border, right_border))
 
+        # Find the largest crop
+        largest_crop_idx = max(
+            range(len(cropped_images)), key=lambda i: cropped_images[i].shape[1]
+        )
+
         if show_visualization:
-            # Find the largest crop
-            largest_crop_idx = max(
-                range(len(cropped_images)), key=lambda i: cropped_images[i].shape[1]
-            )
 
             # Create figure with top row for analysis and bottom rows for characters
             fig = plt.figure(figsize=(15, 10))
@@ -174,7 +175,7 @@ def segmentationProvince(img, input_filename, show_visualization=False, save_pat
                 cv2.imwrite(filepath, cropped_images[largest_crop_idx])
                 print(f"Saved largest province crop to: {filepath}")
 
-        return cropped_images
+        return cropped_images[largest_crop_idx]
 
     except Exception as e:
         print(f"Error during segmentation: {str(e)}")
