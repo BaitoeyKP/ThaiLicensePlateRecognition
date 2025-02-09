@@ -83,7 +83,7 @@ names = [
 ]
 
 # Create folders
-output_path = "../label/province"
+output_path = "../label/province1"
 os.makedirs(output_path, exist_ok=True)
 
 for index, name in enumerate(names, start=0):
