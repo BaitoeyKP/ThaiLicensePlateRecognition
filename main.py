@@ -8,8 +8,8 @@ from segmentationCharacters import segmentationCharacters
 from segmentationProvince import segmentationProvince
 from segmentationRow import segmentationRow
 
-character_model_path = "model/Characters_MobileNetV3Small.onnx"
-province_model_path = "model/Province_MobileNetV3Small.onnx"
+character_model_path = "model/20250106_Characters_MobileNetV3Small.onnx"
+province_model_path = "model/20250204_Province_MobileNetV3Small.onnx"
 characters_class_mapping = [
     "0",
     "1",
@@ -159,7 +159,7 @@ if charactersCrop is not None:
     for img in charactersCrop:
         if img is not None and img.size > 0:
             height = 224
-            width = height // 3  # 3:1 ratio
+            width = height // 3
             img = resizeImageFix(img, width, height)
             character, confident = runOnnxModel(
                 img,
@@ -171,7 +171,7 @@ characters = "".join(characters)
 
 provinceCrop = segmentationProvince(province, filename, True)
 width = 224
-height = width // 3  # 1:3 ratio
+height = width // 3
 provinceImage = resizeImageFix(provinceCrop, width, height, True)
 province, confident = runOnnxModel(
     provinceImage,
@@ -184,10 +184,8 @@ else:
     province = ""
 
 output = {
-    "ParkingSlots_ID": filename,
     "License_ID": characters,
     "Province": province,
 }
 
 json_output = json.dumps(output, ensure_ascii=False, indent=2)
-print(json_output)
