@@ -172,7 +172,11 @@ characters = "".join(characters)
 provinceCrop = segmentationProvince(province, filename, True)
 width = 224
 height = width // 3
-provinceImage = resizeImageFix(provinceCrop, width, height, True)
+provinceImage = resizeImageFix(
+    provinceCrop,
+    width,
+    height,
+)
 province, confident = runOnnxModel(
     provinceImage,
     province_model_path,
