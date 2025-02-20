@@ -1,9 +1,12 @@
+import os
 import numpy as np
 import cv2
 import matplotlib.pyplot as plt
 
 
-def segmentationRow(img, show_visualization=False):
+def segmentationRow(
+    img, show_visualization=False, save_show_result_path=None, filename=None
+):
     try:
         if img is None or img.size == 0:
             print("Invalid input image")
@@ -148,7 +151,15 @@ def segmentationRow(img, show_visualization=False):
             plt.axis("off")
 
             plt.tight_layout()
-            plt.show()
+            if save_show_result_path:
+                filename = f"{filename}_Row.png"
+                save_show_result_path = os.path.join(
+                    os.path.dirname(save_show_result_path), filename
+                )
+                os.makedirs(os.path.dirname(save_show_result_path), exist_ok=True)
+                plt.savefig(save_show_result_path, dpi=300, bbox_inches="tight")
+            # plt.show()
+
 
         return data_img, province_img
 

@@ -1,3 +1,4 @@
+import os
 import cv2
 from matplotlib import pyplot as plt
 import numpy as np
@@ -5,7 +6,9 @@ import numpy as np
 from resizeImage import resizeImageScale
 
 
-def imageEnhancement(image, show_visualization=False):
+def imageEnhancement(
+    image, show_visualization=False, save_show_result_path=None, filename=None
+):
     try:
         resized_img = resizeImageScale(image, 800)
 
@@ -22,7 +25,7 @@ def imageEnhancement(image, show_visualization=False):
                 contrast_enhanced, increase, dtype=np.uint8
             )
             contrast_enhanced = cv2.add(contrast_enhanced, brightness_matrix)
-            
+
         _, binary = cv2.threshold(
             contrast_enhanced, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU
         )
@@ -33,12 +36,12 @@ def imageEnhancement(image, show_visualization=False):
 
         if show_visualization:
             plt.figure(figsize=(15, 10))
-            
+
             plt.subplot(2, 3, 1)
             plt.title("1. Original Image")
             plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
             plt.axis("off")
-            
+
             plt.subplot(2, 3, 2)
             plt.title("2. Grayscale Conversion")
             plt.imshow(gray, cmap="gray")
@@ -65,7 +68,16 @@ def imageEnhancement(image, show_visualization=False):
             plt.axis("off")
 
             plt.tight_layout()
-            plt.show()
+            if save_show_result_path:
+                filename = f"{filename}_Enhance.png"
+                save_show_result_path = os.path.join(
+                    os.path.dirname(save_show_result_path), filename
+                )
+                os.makedirs(os.path.dirname(save_show_result_path), exist_ok=True)
+                plt.savefig(save_show_result_path, dpi=300, bbox_inches="tight")
+            # plt.show()
+            
+
 
         return sharpened
 

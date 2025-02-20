@@ -1,4 +1,4 @@
-import cv2
+import os
 import json
 
 from imageEnhancement import imageEnhancement
@@ -156,27 +156,41 @@ loaded_images, filenames = loadImageFromFolder(folder_path)
 
 for img, filename in zip(loaded_images, filenames):
     enhance_image = imageEnhancement(
-        img,
+        img, save_show_result_path="../Report/imageEnhancement", filename=filename
     )
-    data, province = segmentationRow(enhance_image, True)
+    data, province = segmentationRow(
+        enhance_image,
+        True,
+        save_show_result_path="../Report/segmentationRow",
+        filename=filename,
+    )
 
-    charactersCrop = segmentationCharacters(data, filename, True)
+    charactersCrop = segmentationCharacters(
+        data, filename, True, save_show_result_path="../Report/segmentationCharacters"
+    )
     characters = []
+    charsConfident = []
     if charactersCrop is not None:
         for img in charactersCrop:
             if img is not None and img.size > 0:
                 height = 224
                 width = height // 3
                 img = resizeImageFix(img, width, height)
-                character, confident = runOnnxModel(
+                character, charConfident = runOnnxModel(
                     img,
                     character_model_path,
                     characters_class_mapping,
                 )
                 characters.append(character)
+                charsConfident.append(charConfident)
     characters = "".join(characters)
 
-    provinceCrop = segmentationProvince(province, filename, True)
+    provinceCrop = segmentationProvince(
+        province,
+        filename,
+        True,
+        save_show_result_path="../Report/segmentationCharacters",
+    )
     width = 224
     height = width // 3
     provinceImage = resizeImageFix(
@@ -184,20 +198,27 @@ for img, filename in zip(loaded_images, filenames):
         width,
         height,
     )
-    province, confident = runOnnxModel(
+    province, provinceConfident = runOnnxModel(
         provinceImage,
         province_model_path,
         province_class_mapping,
     )
-    if confident > 50:
+    if provinceConfident > 50:
         province = province
     else:
         province = ""
 
     output = {
+        "Filename": filename,
         "License_ID": characters,
+        "CharConfident": charsConfident,
         "Province": province,
+        "ProvinceConfident": provinceConfident,
     }
+    all_results.append(output)
 
-    json_output = json.dumps(output, ensure_ascii=False, indent=2)
-    print(output)
+result_file_path = os.path.join(output_dir, "all_license_results.json")
+with open(result_file_path, "w", encoding="utf-8") as f:
+    json.dump(all_results, f, ensure_ascii=False, indent=2)
+
+print(f"All results saved to {result_file_path}")

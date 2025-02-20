@@ -6,7 +6,11 @@ from resizeImage import resizeImageScale
 
 
 def segmentationCharacters(
-    img, input_filename, show_visualization=False, save_path=None
+    img,
+    input_filename,
+    show_visualization=False,
+    save_path=None,
+    save_show_result_path=None,
 ):
     try:
         if img is None or img.size == 0:
@@ -25,7 +29,7 @@ def segmentationCharacters(
             threshold = 0.14
         else:
             threshold = 0.06
-        print("mean:", np.mean(column_sums_inverted), " | threshold:", threshold)
+        # print("mean:", np.mean(column_sums_inverted), " | threshold:", threshold)
 
         high_intensity_cols = np.where(column_sums_inverted > threshold)[0]
         if len(high_intensity_cols) == 0:
@@ -78,7 +82,7 @@ def segmentationCharacters(
             min_col = region[0]
             max_col = region[1]
 
-            min_crop = max(int(min_col) - 20, 0) 
+            min_crop = max(int(min_col) - 20, 0)
             max_crop = min(int(max_col) + 20, w)
             if min_crop >= max_crop or max_crop > w:
                 continue
@@ -129,7 +133,7 @@ def segmentationCharacters(
             plt.axhline(y=threshold, color="r", linestyle="--", label="Threshold")
 
             for i, region in enumerate(crop_regions):
-                color = "blue" if i % 2 == 0 else "green" 
+                color = "blue" if i % 2 == 0 else "green"
                 plt.axvspan(
                     region[0],
                     region[1],
@@ -143,15 +147,20 @@ def segmentationCharacters(
             plt.xlabel("Column Number")
 
             for i in range(n_crops):
-                plt.subplot(
-                    2, n_crops, i + n_crops + 1
-                ) 
+                plt.subplot(2, n_crops, i + n_crops + 1)
                 plt.title(f"Char {i+1}")
                 plt.imshow(cv2.cvtColor(cropped_images[i], cv2.COLOR_BGR2RGB))
                 plt.axis("off")
 
             plt.tight_layout()
-            plt.show()
+            if save_show_result_path:
+                filename = f"{input_filename}_Characters.png"
+                save_show_result_path = os.path.join(
+                    os.path.dirname(save_show_result_path), filename
+                )
+                os.makedirs(os.path.dirname(save_show_result_path), exist_ok=True)
+                plt.savefig(save_show_result_path, dpi=300, bbox_inches="tight")
+            # plt.show()
 
         if save_path:
             os.makedirs(save_path, exist_ok=True)

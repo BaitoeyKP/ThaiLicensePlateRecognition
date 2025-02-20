@@ -5,7 +5,13 @@ import matplotlib.pyplot as plt
 from resizeImage import resizeImageScale
 
 
-def segmentationProvince(img, input_filename, show_visualization=False, save_path=None):
+def segmentationProvince(
+    img,
+    input_filename,
+    show_visualization=False,
+    save_path=None,
+    save_show_result_path=None,
+):
     try:
         if img is None or img.size == 0:
             print("Invalid input image")
@@ -62,7 +68,7 @@ def segmentationProvince(img, input_filename, show_visualization=False, save_pat
             min_col = region[0]
             max_col = region[1]
 
-            min_crop = max(int(min_col) - 50, 0)  
+            min_crop = max(int(min_col) - 50, 0)
             max_crop = min(int(max_col) + 50, w)
             if min_crop >= max_crop or max_crop > w:
                 continue
@@ -114,7 +120,7 @@ def segmentationProvince(img, input_filename, show_visualization=False, save_pat
             plt.axhline(y=threshold, color="r", linestyle="--", label="Threshold")
 
             for i, region in enumerate(crop_regions):
-                color = "blue" if i % 2 == 0 else "green" 
+                color = "blue" if i % 2 == 0 else "green"
                 plt.axvspan(
                     region[0],
                     region[1],
@@ -127,7 +133,7 @@ def segmentationProvince(img, input_filename, show_visualization=False, save_pat
             plt.ylabel("Inverted Normalized Sum")
             plt.xlabel("Column Number")
 
-            plt.subplot(2, 3, 5)  
+            plt.subplot(2, 3, 5)
             plt.title("Province")
             plt.imshow(
                 cv2.cvtColor(cropped_images[largest_crop_idx], cv2.COLOR_BGR2RGB)
@@ -135,12 +141,20 @@ def segmentationProvince(img, input_filename, show_visualization=False, save_pat
             plt.axis("off")
 
             plt.tight_layout()
-            plt.show()
+            if save_show_result_path:
+                filename = f"{input_filename}_Province.png"
+                save_show_result_path = os.path.join(
+                    os.path.dirname(save_show_result_path), filename
+                )
+                os.makedirs(os.path.dirname(save_show_result_path), exist_ok=True)
+                plt.savefig(save_show_result_path, dpi=300, bbox_inches="tight")
+            # plt.show()
+
 
         if save_path:
             os.makedirs(save_path, exist_ok=True)
 
-            if len(cropped_images) > 0:  
+            if len(cropped_images) > 0:
                 largest_crop_idx = max(
                     range(len(cropped_images)), key=lambda i: cropped_images[i].shape[1]
                 )
