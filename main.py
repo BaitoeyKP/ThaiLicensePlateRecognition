@@ -2,6 +2,7 @@ import cv2
 import json
 
 from imageEnhancement import imageEnhancement
+from loadImage import loadImageFromFolder
 from resizeImage import resizeImageFix
 from runOnnxModel import runOnnxModel
 from segmentationCharacters import segmentationCharacters
@@ -148,48 +149,55 @@ province_class_mapping = [
 ]
 
 
-filename = "../dataset/new/24_02_05_V00490.jpg"
-img = cv2.imread(filename)
-enhance_image = imageEnhancement(img, True)
-data, province = segmentationRow(enhance_image, True)
+output_dir = "../Report"
+all_results = []
+folder_path = "../dataset/test"
+loaded_images, filenames = loadImageFromFolder(folder_path)
 
-charactersCrop = segmentationCharacters(data, filename, True)
-characters = []
-if charactersCrop is not None:
-    for img in charactersCrop:
-        if img is not None and img.size > 0:
-            height = 224
-            width = height // 3
-            img = resizeImageFix(img, width, height)
-            character, confident = runOnnxModel(
-                img,
-                character_model_path,
-                characters_class_mapping,
-            )
-            characters.append(character)
-characters = "".join(characters)
+for img, filename in zip(loaded_images, filenames):
+    enhance_image = imageEnhancement(
+        img,
+    )
+    data, province = segmentationRow(enhance_image, True)
 
-provinceCrop = segmentationProvince(province, filename, True)
-width = 224
-height = width // 3
-provinceImage = resizeImageFix(
-    provinceCrop,
-    width,
-    height,
-)
-province, confident = runOnnxModel(
-    provinceImage,
-    province_model_path,
-    province_class_mapping,
-)
-if confident > 50:
-    province = province
-else:
-    province = ""
+    charactersCrop = segmentationCharacters(data, filename, True)
+    characters = []
+    if charactersCrop is not None:
+        for img in charactersCrop:
+            if img is not None and img.size > 0:
+                height = 224
+                width = height // 3
+                img = resizeImageFix(img, width, height)
+                character, confident = runOnnxModel(
+                    img,
+                    character_model_path,
+                    characters_class_mapping,
+                )
+                characters.append(character)
+    characters = "".join(characters)
 
-output = {
-    "License_ID": characters,
-    "Province": province,
-}
+    provinceCrop = segmentationProvince(province, filename, True)
+    width = 224
+    height = width // 3
+    provinceImage = resizeImageFix(
+        provinceCrop,
+        width,
+        height,
+    )
+    province, confident = runOnnxModel(
+        provinceImage,
+        province_model_path,
+        province_class_mapping,
+    )
+    if confident > 50:
+        province = province
+    else:
+        province = ""
 
-json_output = json.dumps(output, ensure_ascii=False, indent=2)
+    output = {
+        "License_ID": characters,
+        "Province": province,
+    }
+
+    json_output = json.dumps(output, ensure_ascii=False, indent=2)
+    print(output)

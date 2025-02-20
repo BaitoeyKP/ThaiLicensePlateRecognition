@@ -14,18 +14,18 @@ def segmentationCharacters(
             return None
 
         original_img = img.copy()
-        resized_img = resizeImageScale(img, 500)
+        resized_img = resizeImageScale(img, 1000)
 
         h, w = resized_img.shape[:2]
         column_sums = np.sum(resized_img, axis=0)
         column_sums_normalized = column_sums / np.max(column_sums)
         column_sums_inverted = 1 - column_sums_normalized
 
-        if np.mean(column_sums_inverted) > 0.36:
-            threshold = 0.17
+        if np.mean(column_sums_inverted) > 0.35:
+            threshold = 0.14
         else:
-            threshold = 0.05
-        # print("mean:", np.mean(column_sums_inverted), " | threshold:", threshold)
+            threshold = 0.06
+        print("mean:", np.mean(column_sums_inverted), " | threshold:", threshold)
 
         high_intensity_cols = np.where(column_sums_inverted > threshold)[0]
         if len(high_intensity_cols) == 0:
@@ -34,7 +34,7 @@ def segmentationCharacters(
 
         high_regions = []
         start_idx = high_intensity_cols[0]
-        left_border = 600
+        left_border = 300
         right_border = w - left_border
 
         for i in range(1, len(high_intensity_cols)):

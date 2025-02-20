@@ -7,7 +7,7 @@ from resizeImage import resizeImageScale
 
 def imageEnhancement(image, show_visualization=False):
     try:
-        resized_img = resizeImageScale(image, 500)
+        resized_img = resizeImageScale(image, 800)
 
         gray = cv2.cvtColor(resized_img, cv2.COLOR_BGR2GRAY)
         denoised = cv2.bilateralFilter(gray, 11, 17, 17)

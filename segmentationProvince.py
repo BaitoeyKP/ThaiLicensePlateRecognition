@@ -12,7 +12,7 @@ def segmentationProvince(img, input_filename, show_visualization=False, save_pat
             return None
 
         original_img = img.copy()
-        resized_img = resizeImageScale(img, 500)
+        resized_img = resizeImageScale(img, 1000)
 
         h, w = resized_img.shape[:2]
         column_sums = np.sum(resized_img, axis=0)
