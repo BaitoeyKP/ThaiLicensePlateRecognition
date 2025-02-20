@@ -78,8 +78,15 @@ def segmentationRow(img, show_visualization=False):
                     crop_regions.append((min_crop, max_crop))
                     region_intensities.append(region_intensity)
 
-        if len(cropped_images) < 2:
+        if len(cropped_images) < 1:
             print(f"Not enough regions found: {len(cropped_images)}")
+            cropped_image = img
+            cropped_images.append(cropped_image)
+            heights.append(w - min_row)
+            crop_regions.append((min_row_temp, w))
+            region_intensities.append(region_intensity)
+
+        if len(cropped_images) < 2:
             cropped_image = img[h - 700 : h, :]
             cropped_images.append(cropped_image)
             heights.append(w - min_row)
@@ -110,7 +117,7 @@ def segmentationRow(img, show_visualization=False):
             colors = [
                 "green",
                 "blue",
-            ] 
+            ]
             for i, region in enumerate(crop_regions):
                 color = colors[i % len(colors)]
                 alpha = 0.4 if (i == data_idx or i == province_idx) else 0.1
