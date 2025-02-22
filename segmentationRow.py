@@ -5,7 +5,11 @@ import matplotlib.pyplot as plt
 
 
 def segmentationRow(
-    img, show_visualization=False, save_show_result_path=None, filename=None
+    img,
+    input_filename,
+    show_visualization=False,
+    save_path=None,
+    save_show_result_path=None,
 ):
     try:
         if img is None or img.size == 0:
@@ -152,14 +156,23 @@ def segmentationRow(
 
             plt.tight_layout()
             if save_show_result_path:
-                filename = f"{filename}_Row.png"
+                filename = f"{input_filename}_Row.png"
                 save_show_result_path = os.path.join(
                     os.path.dirname(save_show_result_path), filename
                 )
                 os.makedirs(os.path.dirname(save_show_result_path), exist_ok=True)
                 plt.savefig(save_show_result_path, dpi=300, bbox_inches="tight")
-            # plt.show()
+            plt.show()
 
+        if save_path:
+            os.makedirs(save_path, exist_ok=True)
+
+            for idx, (cropped_image) in enumerate(cropped_images):
+                filename = f"{input_filename}_row_{idx}.png"
+                filepath = os.path.join(save_path, filename)
+
+                cv2.imwrite(filepath, cropped_image)
+                print(f"Saved cropped image {idx+1} to: {filepath}")
 
         return data_img, province_img
 

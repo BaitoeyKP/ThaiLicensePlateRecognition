@@ -148,8 +148,7 @@ def segmentationProvince(
                 )
                 os.makedirs(os.path.dirname(save_show_result_path), exist_ok=True)
                 plt.savefig(save_show_result_path, dpi=300, bbox_inches="tight")
-            # plt.show()
-
+            plt.show()
 
         if save_path:
             os.makedirs(save_path, exist_ok=True)
@@ -159,7 +158,7 @@ def segmentationProvince(
                     range(len(cropped_images)), key=lambda i: cropped_images[i].shape[1]
                 )
 
-                filename = f"{input_filename}_Province.png"
+                filename = f"{input_filename}_ProvinceCropped.png"
                 filepath = os.path.join(save_path, filename)
 
                 cv2.imwrite(filepath, cropped_images[largest_crop_idx])
