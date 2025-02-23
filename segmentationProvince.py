@@ -24,7 +24,7 @@ def segmentationProvince(
         column_sums = np.sum(resized_img, axis=0)
         column_sums_normalized = column_sums / np.max(column_sums)
         column_sums_inverted = 1 - column_sums_normalized
-        threshold = 0.25
+        threshold = 0.15
 
         high_intensity_cols = np.where(column_sums_inverted > threshold)[0]
         if len(high_intensity_cols) == 0:

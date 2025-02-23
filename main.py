@@ -1,8 +1,10 @@
 import os
+import cv2
 import json
 
+import numpy as np
+
 from imageEnhancement import imageEnhancement
-from loadImage import loadImageFromFolder
 from resizeImage import resizeImageFix
 from runOnnxModel import runOnnxModel
 from segmentationCharacters import segmentationCharacters
@@ -148,77 +150,59 @@ province_class_mapping = [
     "เบตง",
 ]
 
-
-output_dir = "../Report"
-all_results = []
 folder_path = "../dataset/test"
-loaded_images, filenames = loadImageFromFolder(folder_path)
+filename = "test4.png"
+file_path = os.path.join(folder_path, filename)
+img = cv2.imread(file_path)
+enhance_image = imageEnhancement(img, True)
+data, province = segmentationRow(
+    enhance_image, filename, True, save_path="../Report/segmentationRow"
+)
 
-for img, filename in zip(loaded_images, filenames):
-    enhance_image = imageEnhancement(
-        img, save_show_result_path="../Report/imageEnhancement", filename=filename
-    )
-    data, province = segmentationRow(
-        enhance_image,
-        True,
-        save_show_result_path="../Report/segmentationRow",
-        filename=filename,
-    )
+charactersCrop = segmentationCharacters(data, filename, True)
+characters = []
+charactersConfident = []
+if charactersCrop is not None:
+    for img in charactersCrop:
+        if img is not None and img.size > 0:
+            height = 224
+            width = height // 3
+            img = resizeImageFix(img, width, height)
+            character, characterConfident = runOnnxModel(
+                img,
+                character_model_path,
+                characters_class_mapping,
+            )
+            characters.append(character)
+            charactersConfident.append(characterConfident)
+characters = "".join(characters)
 
-    charactersCrop = segmentationCharacters(
-        data, filename, True, save_show_result_path="../Report/segmentationCharacters"
-    )
-    characters = []
-    charsConfident = []
-    if charactersCrop is not None:
-        for img in charactersCrop:
-            if img is not None and img.size > 0:
-                height = 224
-                width = height // 3
-                img = resizeImageFix(img, width, height)
-                character, charConfident = runOnnxModel(
-                    img,
-                    character_model_path,
-                    characters_class_mapping,
-                )
-                characters.append(character)
-                charsConfident.append(charConfident)
-    characters = "".join(characters)
+provinceCrop = segmentationProvince(
+    province, filename, True, save_path="../Report/segmentationProvince"
+)
+width = 224
+height = width // 3
+provinceImage = resizeImageFix(
+    provinceCrop,
+    width,
+    height,
+)
+province, provinceConfident = runOnnxModel(
+    provinceImage,
+    province_model_path,
+    province_class_mapping,
+)
+if provinceConfident > 50:
+    province = province
+else:
+    province = ""
 
-    provinceCrop = segmentationProvince(
-        province,
-        filename,
-        True,
-        save_show_result_path="../Report/segmentationCharacters",
-    )
-    width = 224
-    height = width // 3
-    provinceImage = resizeImageFix(
-        provinceCrop,
-        width,
-        height,
-    )
-    province, provinceConfident = runOnnxModel(
-        provinceImage,
-        province_model_path,
-        province_class_mapping,
-    )
-    if provinceConfident > 50:
-        province = province
-    else:
-        province = ""
+output = {
+    "License_ID": characters,
+    "CharactersConfident": np.average(charactersConfident),
+    "Province": province,
+    "ProvinceConfident": provinceConfident,
+}
 
-    output = {
-        "Filename": filename,
-        "License_ID": characters,
-        "CharConfident": charsConfident,
-        "Province": province,
-        "ProvinceConfident": provinceConfident,
-    }
-    all_results.append(output)
-
-result_file_path = os.path.join(output_dir, "all_license_results.json")
-with open(result_file_path, "w", encoding="utf-8") as f:
-    json.dump(all_results, f, ensure_ascii=False, indent=2)
-
-print(f"All results saved to {result_file_path}")
+json_output = json.dumps(output, ensure_ascii=False, indent=2)
+print(json_output)

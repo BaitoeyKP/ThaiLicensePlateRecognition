@@ -75,7 +75,7 @@ def imageEnhancement(
                 )
                 os.makedirs(os.path.dirname(save_show_result_path), exist_ok=True)
                 plt.savefig(save_show_result_path, dpi=300, bbox_inches="tight")
-            # plt.show()
+            plt.show()
             
 
 

@@ -38,7 +38,7 @@ def segmentationCharacters(
 
         high_regions = []
         start_idx = high_intensity_cols[0]
-        left_border = 300
+        left_border = 50
         right_border = w - left_border
 
         for i in range(1, len(high_intensity_cols)):
