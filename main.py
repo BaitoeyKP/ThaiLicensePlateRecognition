@@ -8,7 +8,7 @@ from segmentationCharacters import segmentationCharacters
 from segmentationProvince import segmentationProvince
 from segmentationRow import segmentationRow
 
-character_model_path = "model/20250106_Characters_MobileNetV3Small.onnx"
+character_model_path = "model/20250224_Characters_MobileNetV3Small.onnx"
 province_model_path = "model/20250204_Province_MobileNetV3Small.onnx"
 characters_class_mapping = [
     "0",
@@ -148,9 +148,11 @@ province_class_mapping = [
 ]
 
 
-filename = "../dataset/new/24_02_05_V00490.jpg"
+filename = "../dataset/real/lp_20250224_233231.jpg"
 img = cv2.imread(filename)
-enhance_image = imageEnhancement(img, True)
+enhance_image = imageEnhancement(
+    img,
+)
 data, province = segmentationRow(enhance_image, True)
 
 charactersCrop = segmentationCharacters(data, filename, True)
@@ -193,3 +195,4 @@ output = {
 }
 
 json_output = json.dumps(output, ensure_ascii=False, indent=2)
+print(json_output)
