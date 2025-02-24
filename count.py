@@ -47,7 +47,7 @@ def natural_sort_key(s):
 
 def main():
     # Path to the characters directory
-    characters_path = "../label/province"
+    characters_path = "../label/characters"
 
     # Get the counts
     counts = count_files_in_folders(characters_path)
@@ -63,8 +63,8 @@ def main():
         # Sort using the folder names directly
         for folder in sorted(counts.keys(), key=natural_sort_key):
             count = counts[folder]
-            if count < 10:
-                print(f"{count}\t|\t{folder}")
+            # if count < 10:
+            print(f"{count}\t|\t{folder}")
             total_files += count
 
         print("-" * 50)

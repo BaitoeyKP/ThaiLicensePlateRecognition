@@ -81,12 +81,68 @@ names = [
     "สมุทรสงคราม",
     "เบตง",
 ]
+characters_class = [
+    "0",
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9",
+    "ก",
+    "ข",
+    "ฃ",
+    "ค",
+    "ฅ",
+    "ฆ",
+    "ง",
+    "จ",
+    "ฉ",
+    "ช",
+    "ซ",
+    "ฌ",
+    "ญ",
+    "ฎ",
+    "ฏ",
+    "ฐ",
+    "ฑ",
+    "ฒ",
+    "ณ",
+    "ด",
+    "ต",
+    "ถ",
+    "ท",
+    "ธ",
+    "น",
+    "บ",
+    "ป",
+    "ผ",
+    "ฝ",
+    "พ",
+    "ฟ",
+    "ภ",
+    "ม",
+    "ย",
+    "ร",
+    "ล",
+    "ว",
+    "ศ",
+    "ษ",
+    "ส",
+    "ห",
+    "ฬ",
+    "อ",
+    "ฮ",
+]
 
 # Create folders
-output_path = "../label/province1"
+output_path = "../label/characters1"
 os.makedirs(output_path, exist_ok=True)
 
-for index, name in enumerate(names, start=0):
+for index, name in enumerate(characters_class, start=0):
     folder_name = f"0{index:02}{name}"
     folder_path = os.path.join(output_path, folder_name)
     os.makedirs(folder_path, exist_ok=True)
