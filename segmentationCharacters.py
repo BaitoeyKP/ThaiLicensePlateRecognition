@@ -22,7 +22,7 @@ def segmentationCharacters(
         column_sums_inverted = 1 - column_sums_normalized
 
         if np.mean(column_sums_inverted) > 0.36:
-            threshold = 0.17
+            threshold = 0.125
         else:
             threshold = 0.05
         # print("mean:", np.mean(column_sums_inverted), " | threshold:", threshold)
@@ -34,7 +34,7 @@ def segmentationCharacters(
 
         high_regions = []
         start_idx = high_intensity_cols[0]
-        left_border = 600
+        left_border = 50
         right_border = w - left_border
 
         for i in range(1, len(high_intensity_cols)):

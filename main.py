@@ -153,9 +153,14 @@ img = cv2.imread(filename)
 enhance_image = imageEnhancement(
     img,
 )
-data, province = segmentationRow(enhance_image, True)
+data, province = segmentationRow(
+    enhance_image,
+)
 
-charactersCrop = segmentationCharacters(data, filename, True)
+charactersCrop = segmentationCharacters(
+    data,
+    filename,
+)
 characters = []
 if charactersCrop is not None:
     for img in charactersCrop:
@@ -171,7 +176,10 @@ if charactersCrop is not None:
             characters.append(character)
 characters = "".join(characters)
 
-provinceCrop = segmentationProvince(province, filename, True)
+provinceCrop = segmentationProvince(
+    province,
+    filename,
+)
 width = 224
 height = width // 3
 provinceImage = resizeImageFix(
@@ -184,7 +192,7 @@ province, confident = runOnnxModel(
     province_model_path,
     province_class_mapping,
 )
-if confident > 50:
+if confident > 60:
     province = province
 else:
     province = ""
@@ -195,4 +203,3 @@ output = {
 }
 
 json_output = json.dumps(output, ensure_ascii=False, indent=2)
-print(json_output)
