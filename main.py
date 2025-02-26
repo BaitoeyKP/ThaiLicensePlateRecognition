@@ -11,7 +11,7 @@ from segmentationCharacters import segmentationCharacters
 from segmentationProvince import segmentationProvince
 from segmentationRow import segmentationRow
 
-character_model_path = "model/20250106_Characters_MobileNetV3Small.onnx"
+character_model_path = "model/20250224_Characters_MobileNetV3Small.onnx"
 province_model_path = "model/20250204_Province_MobileNetV3Small.onnx"
 characters_class_mapping = [
     "0",
@@ -151,13 +151,13 @@ province_class_mapping = [
 ]
 
 folder_path = "../dataset/test"
-filename = "test4.png"
+filename = "104.jpg"
 file_path = os.path.join(folder_path, filename)
 img = cv2.imread(file_path)
-enhance_image = imageEnhancement(img, True)
-data, province = segmentationRow(
-    enhance_image, filename, True, save_path="../Report/segmentationRow"
+enhance_image = imageEnhancement(
+    img,
 )
+data, province = segmentationRow(enhance_image, filename, save_path="../Report/test2")
 
 charactersCrop = segmentationCharacters(data, filename, True)
 characters = []
@@ -177,9 +177,7 @@ if charactersCrop is not None:
             charactersConfident.append(characterConfident)
 characters = "".join(characters)
 
-provinceCrop = segmentationProvince(
-    province, filename, True, save_path="../Report/segmentationProvince"
-)
+provinceCrop = segmentationProvince(province, filename, save_path="../Report/test2")
 width = 224
 height = width // 3
 provinceImage = resizeImageFix(
