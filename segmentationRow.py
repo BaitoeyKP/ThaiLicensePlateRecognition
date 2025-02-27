@@ -95,7 +95,7 @@ def segmentationRow(
             region_intensities.append(region_intensity)
 
         if len(cropped_images) < 2:
-            cropped_image = img[h - 300 : h, :]
+            cropped_image = img[h - 700 : h, :]
             cropped_images.append(cropped_image)
             heights.append(w - min_row)
             crop_regions.append((min_row_temp, w))

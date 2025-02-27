@@ -150,14 +150,12 @@ province_class_mapping = [
     "เบตง",
 ]
 
-folder_path = "../dataset/test"
-filename = "104.jpg"
+folder_path = "../dataset/20250227_hm"
+filename = "lp_section3_20250227_190307.jpg"
 file_path = os.path.join(folder_path, filename)
 img = cv2.imread(file_path)
-enhance_image = imageEnhancement(
-    img,
-)
-data, province = segmentationRow(enhance_image, filename, save_path="../Report/test2")
+enhance_image = imageEnhancement(img, True)
+data, province = segmentationRow(enhance_image, filename, True)
 
 charactersCrop = segmentationCharacters(data, filename, True)
 characters = []
@@ -177,23 +175,19 @@ if charactersCrop is not None:
             charactersConfident.append(characterConfident)
 characters = "".join(characters)
 
-provinceCrop = segmentationProvince(province, filename, save_path="../Report/test2")
+provinceCrop = segmentationProvince(province, filename, True)
 width = 224
 height = width // 3
-provinceImage = resizeImageFix(
-    provinceCrop,
-    width,
-    height,
-)
+provinceImage = resizeImageFix(provinceCrop, width, height, True)
 province, provinceConfident = runOnnxModel(
     provinceImage,
     province_model_path,
     province_class_mapping,
 )
-if provinceConfident > 50:
-    province = province
-else:
-    province = ""
+# if provinceConfident > 50:
+#     province = province
+# else:
+#     province = ""
 
 output = {
     "License_ID": characters,

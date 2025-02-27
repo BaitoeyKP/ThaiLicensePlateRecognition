@@ -18,7 +18,7 @@ def segmentationProvince(
             return None
 
         original_img = img.copy()
-        resized_img = resizeImageScale(img, 1000)
+        resized_img = resizeImageScale(img, 500)
 
         h, w = resized_img.shape[:2]
         column_sums = np.sum(resized_img, axis=0)
@@ -50,7 +50,7 @@ def segmentationProvince(
             ):
                 current_min_region_distance = 1000
             else:
-                current_min_region_distance = 1
+                current_min_region_distance = 500
 
             if (
                 high_intensity_cols[i] - high_intensity_cols[i - 1]
