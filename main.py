@@ -148,19 +148,12 @@ province_class_mapping = [
 ]
 
 
-filename = "../dataset/real/lp_20250224_233231.jpg"
+filename = "../dataset/20250227_hm/lp_section2_20250227_190307.jpg"
 img = cv2.imread(filename)
-enhance_image = imageEnhancement(
-    img,
-)
-data, province = segmentationRow(
-    enhance_image,
-)
+enhance_image = imageEnhancement(img, True)
+data, province = segmentationRow(enhance_image, True)
 
-charactersCrop = segmentationCharacters(
-    data,
-    filename,
-)
+charactersCrop = segmentationCharacters(data, filename, True)
 characters = []
 if charactersCrop is not None:
     for img in charactersCrop:
@@ -176,10 +169,7 @@ if charactersCrop is not None:
             characters.append(character)
 characters = "".join(characters)
 
-provinceCrop = segmentationProvince(
-    province,
-    filename,
-)
+provinceCrop = segmentationProvince(province, filename, True)
 width = 224
 height = width // 3
 provinceImage = resizeImageFix(
@@ -203,3 +193,4 @@ output = {
 }
 
 json_output = json.dumps(output, ensure_ascii=False, indent=2)
+print(json_output)

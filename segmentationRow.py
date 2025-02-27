@@ -59,7 +59,8 @@ def segmentationRow(img, show_visualization=False):
                 cropped_image = img[min_crop:max_crop, :]
                 size = max_row - min_row
                 if size > 200 and (
-                    size / h >= 0.1 or np.max(row_sums_inverted[min_row:max_row]) < 0.75
+                    # size / h >= 0.1 or
+                    np.max(row_sums_inverted[min_row:max_row]) < 0.75
                 ):
                     min_row_temp = max_row + 100
                     # print(
