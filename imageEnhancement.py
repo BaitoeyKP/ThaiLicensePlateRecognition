@@ -14,7 +14,8 @@ def imageEnhancement(image, show_visualization=False):
         clahe = cv2.createCLAHE(clipLimit=3.0, tileGridSize=(8, 8))
         contrast_enhanced = clahe.apply(denoised)
         average_brightness = np.mean(contrast_enhanced)
-        brightness_threshold = 130
+        brightness_threshold = 100
+        # print(average_brightness)
 
         if average_brightness < brightness_threshold:
             increase = 125
@@ -22,7 +23,7 @@ def imageEnhancement(image, show_visualization=False):
                 contrast_enhanced, increase, dtype=np.uint8
             )
             contrast_enhanced = cv2.add(contrast_enhanced, brightness_matrix)
-            
+
         _, binary = cv2.threshold(
             contrast_enhanced, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU
         )
@@ -33,12 +34,12 @@ def imageEnhancement(image, show_visualization=False):
 
         if show_visualization:
             plt.figure(figsize=(15, 10))
-            
+
             plt.subplot(2, 3, 1)
             plt.title("1. Original Image")
             plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
             plt.axis("off")
-            
+
             plt.subplot(2, 3, 2)
             plt.title("2. Grayscale Conversion")
             plt.imshow(gray, cmap="gray")

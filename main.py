@@ -148,11 +148,9 @@ province_class_mapping = [
 ]
 
 
-filename = "../dataset/20250227_hm/lp_section2_20250307_045900.jpg"
+filename = "../dataset/20250227_hm/lp_section3_20250307_055410.jpg"
 img = cv2.imread(filename)
-enhance_image = imageEnhancement(
-    img,
-)
+enhance_image = imageEnhancement(img, True)
 data, province = segmentationRow(enhance_image, True)
 
 charactersCrop = segmentationCharacters(data, filename, True)
@@ -184,7 +182,7 @@ province, confident = runOnnxModel(
     province_model_path,
     province_class_mapping,
 )
-if confident > 60:
+if confident > 80:
     province = province
 else:
     province = ""
