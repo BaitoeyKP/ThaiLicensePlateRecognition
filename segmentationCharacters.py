@@ -78,7 +78,7 @@ def segmentationCharacters(
             min_col = region[0]
             max_col = region[1]
 
-            min_crop = max(int(min_col) - 20, 0) 
+            min_crop = max(int(min_col) - 20, 0)
             max_crop = min(int(max_col) + 20, w)
             if min_crop >= max_crop or max_crop > w:
                 continue
@@ -129,7 +129,7 @@ def segmentationCharacters(
             plt.axhline(y=threshold, color="r", linestyle="--", label="Threshold")
 
             for i, region in enumerate(crop_regions):
-                color = "blue" if i % 2 == 0 else "green" 
+                color = "blue" if i % 2 == 0 else "green"
                 plt.axvspan(
                     region[0],
                     region[1],
@@ -143,9 +143,7 @@ def segmentationCharacters(
             plt.xlabel("Column Number")
 
             for i in range(n_crops):
-                plt.subplot(
-                    2, n_crops, i + n_crops + 1
-                ) 
+                plt.subplot(2, n_crops, i + n_crops + 1)
                 plt.title(f"Char {i+1}")
                 plt.imshow(cv2.cvtColor(cropped_images[i], cv2.COLOR_BGR2RGB))
                 plt.axis("off")

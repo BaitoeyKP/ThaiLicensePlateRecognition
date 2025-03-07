@@ -148,9 +148,11 @@ province_class_mapping = [
 ]
 
 
-filename = "../dataset/20250227_hm/lp_section2_20250227_190307.jpg"
+filename = "../dataset/20250227_hm/lp_section2_20250307_045900.jpg"
 img = cv2.imread(filename)
-enhance_image = imageEnhancement(img, True)
+enhance_image = imageEnhancement(
+    img,
+)
 data, province = segmentationRow(enhance_image, True)
 
 charactersCrop = segmentationCharacters(data, filename, True)
