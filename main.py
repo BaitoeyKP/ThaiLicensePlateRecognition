@@ -9,7 +9,7 @@ from segmentationProvince import segmentationProvince
 from segmentationRow import segmentationRow
 
 character_model_path = "model/20250224_Characters_MobileNetV3Small.onnx"
-province_model_path = "model/20250204_Province_MobileNetV3Small.onnx"
+province_model_path = "model/20250217_Province_MobileNetV3Small.onnx"
 characters_class_mapping = [
     "0",
     "1",
